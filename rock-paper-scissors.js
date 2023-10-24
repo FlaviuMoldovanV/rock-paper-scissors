@@ -7,8 +7,11 @@ function getComputerChoice() {
 }
 
 //Determines the winner of a round between user and computer
-function playRound(playerSelection, computerSelection) {
-    playerSelection = playerSelection.toLowerCase();
+function playRound() {
+
+    let playerSelection = prompt("Write your choice(rock, paper, scissors)").toLowerCase();
+    let computerSelection = getComputerChoice();
+
     console.log("Computer chooses:", computerSelection);
     if (playerSelection == computerSelection)
         return "It's a tie!";
@@ -38,6 +41,26 @@ function playRound(playerSelection, computerSelection) {
     }
 }
 
-let playerSelection = prompt("Write your choice(rock, paper, scissors)");
-let computerSelection = getComputerChoice();
-alert(playRound(playerSelection, computerSelection));
+// Creates a 5 round game using the playRound()function
+function game() {
+    let playerCount = 0;
+    let computerCount = 0;
+    let result;
+    while (playerCount < 3 && computerCount < 3) {
+        result = playRound();
+        console.log(result);
+
+        if (result.includes("Win"))
+            playerCount++;
+        else if (result.includes("Lose"))
+            computerCount++;
+        console.log("Player", playerCount, "- Computer", computerCount);
+    }
+
+    if (playerCount == 3)
+        alert("YOU WIN!");
+    else
+        alert("COMPUTER WINS!")
+}
+
+game();
