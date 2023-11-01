@@ -1,5 +1,10 @@
 "use strict";
 
+const score = document.querySelector("#score");
+const result = document.querySelector("#result");
+const displayCPUChoice = document.querySelector("#displayCPUChoice");
+const roundsToWin = 5;
+
 // Generates random choice for the computer
 function getComputerChoice() {
     let choices = ["rock", "paper", "scissors"];
@@ -7,60 +12,104 @@ function getComputerChoice() {
 }
 
 //Determines the winner of a round between user and computer
-function playRound() {
+function playRound(playerSelection) {
+    const computerSelection = getComputerChoice();
+    displayCPUChoice.textContent = `Computer chooses: ${computerSelection}`;
 
-    let playerSelection = prompt("Write your choice(rock, paper, scissors)").toLowerCase();
-    let computerSelection = getComputerChoice();
-
-    console.log("Computer chooses:", computerSelection);
-    if (playerSelection == computerSelection)
-        return "It's a tie!";
-
+    if (playerSelection == computerSelection) {
+        result.textContent = "It's a tie!";
+        return;
+    }
     switch (playerSelection) {
         case "rock":
-            if (computerSelection == "paper")
-                return `You Win! ${playerSelection} beats ${computerSelection}!`;
-            else
-                return `You Lose! ${computerSelection} beats ${playerSelection}!`;
+            if (computerSelection == "paper") {
+                result.textContent = `You Win! ${playerSelection} beats ${computerSelection}!`;
+                return;
+            }
+            else {
+                result.textContent = `You Lose! ${computerSelection} beats ${playerSelection}!`;
+                return;
+            }
 
         case "paper":
-            if (computerSelection == "scissors")
-                return `You Win! ${playerSelection} beats ${computerSelection}!`;
-            else
-                return `You Lose! ${computerSelection} beats ${playerSelection}!`;
+            if (computerSelection == "scissors") {
+                result.textContent = `You Win! ${playerSelection} beats ${computerSelection}!`;
+                return;
+            }
+            else {
+                result.textContent = `You Lose! ${computerSelection} beats ${playerSelection}!`;
+                return;
+            }
 
         case "scissors":
-            if (computerSelection == "rock")
-                return `You Win! ${playerSelection} beats ${computerSelection}!`;
-            else
-                return `You Lose! ${computerSelection} beats ${playerSelection}!`;
-
-        default:
-            return "Please write only the options presented!";
-
+            if (computerSelection == "rock") {
+                result.textContent = `You Win! ${playerSelection} beats ${computerSelection}!`;
+                return;
+            }
+            else {
+                result.textContent = `You Lose! ${computerSelection} beats ${playerSelection}!`;
+                return;
+            }
     }
 }
+
+//setTimeout in order for the message to be properly displayed
+function endGame(message) {
+    score.textContent = message;
+    setTimeout(resetGame, 100);
+}
+
+
+
+function resetGame() {
+    if (confirm("Play again?")) {
+        location.reload(); // it's the same as refreshing the page
+    }
+    else {
+        score.textContent = "Game Ended!";
+        // if the game is ended then the user won't need to use the buttons.
+        const buttons = document.querySelectorAll('button');
+        buttons.forEach(button => {
+            button.disabled = true;
+        });
+    }
+
+}
+
+
 
 // Creates a 5 round game using the playRound()function
-function game() {
+(function game() {
+
     let playerCount = 0;
     let computerCount = 0;
-    let result;
-    while (playerCount < 3 && computerCount < 3) {
-        result = playRound();
-        console.log(result);
+    console.log(playerCount, computerCount);
 
-        if (result.includes("Win"))
-            playerCount++;
-        else if (result.includes("Lose"))
-            computerCount++;
-        console.log("Player", playerCount, "- Computer", computerCount);
-    }
+    document.addEventListener("click", (e) => {
+        if (e.target.matches("button")) {
+            playRound(e.target.id);
 
-    if (playerCount == 3)
-        alert("YOU WIN!");
-    else
-        alert("COMPUTER WINS!")
-}
+            if (result.textContent.includes("Win")) {
+                playerCount++;
+            }
+            else if (result.textContent.includes("Lose")) {
+                computerCount++;
+            }
 
-game();
+            score.textContent = `\tPlayer:${playerCount}\t-\tComputer:${computerCount}`;
+
+            // Check if a player has won 5 rounds
+            if (playerCount === roundsToWin) {
+                endGame("Player WINS!");
+            }
+
+            if (computerCount === roundsToWin) {
+                endGame("Computer WINS!");
+            }
+
+        }
+    });
+})();
+
+
+
